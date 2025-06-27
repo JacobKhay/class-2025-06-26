@@ -1,0 +1,74 @@
+---
+title: "Race and Income"
+author: "Jacob Khaykin"
+execute:
+    echo: false
+    warning: false
+    message: false
+---
+
+
+```{r}
+# Load libraries
+library(tidyverse)
+library(scales)
+library(viridis)
+library(plotly)
+
+# Load and clean the data
+nyc_data <- read_csv(
+  "https://raw.githubusercontent.com/PPBDS/primer.data/master/data-raw/nyc_tracts.csv",
+  show_col_types = FALSE
+)
+
+nyc_data <- nyc_data %>%
+  separate(tract, into = c("tract_id", "county", "state"), sep = "; ") %>%
+  mutate(
+    county = str_trim(county),
+    race = factor(race, levels = c("White", "Hispanic", "Black", "Asian")),
+    borough = case_when(
+      county == "Bronx County"      ~ "Bronx",
+      county == "Kings County"      ~ "Brooklyn",
+      county == "New York County"   ~ "Manhattan",
+      county == "Queens County"     ~ "Queens",
+      county == "Richmond County"   ~ "Staten Island",
+      TRUE                          ~ NA_character_
+    )
+  ) %>%
+  filter(!is.na(borough))
+
+# Create the ggplot
+p <- ggplot(nyc_data, aes(
+  x = med_income,
+  y = race,
+  color = med_income,
+  text = paste0(
+    "Tract: ", tract_id, "<br>",
+    "Borough: ", borough, "<br>",
+    "Race: ", race, "<br>",
+    "Income: $", round(med_income, 0)
+  )
+)) +
+  geom_point(alpha = 0.7, size = 2) +
+  facet_wrap(~borough, ncol = 1, scales = "free_y") +
+  scale_color_viridis_c(option = "plasma", direction = 1) +
+  scale_x_continuous(labels = dollar_format()) +
+  scale_y_discrete(drop = FALSE) +
+  labs(
+    title = "Race and Income Across Census Tracts in New York City",
+    x = "Median household income",
+    y = "Largest group in Census tract"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    legend.position   = "none",
+    strip.text        = element_text(size = 12, face = "bold"),
+    axis.text.y       = element_text(face = "bold"),
+    plot.title        = element_text(hjust = 0.5, face = "bold", size = 14)
+  )
+
+# Convert to interactive plot
+ggplotly(p, tooltip = "text")
+
+```
+This interactive plot visualizes the relationship between race and median household income across census tracts in New York City, faceted by borough. Each point represents a census tract, positioned by its dominant racial group and median income, with color intensity indicating income levels. By separating tracts by borough—Bronx, Brooklyn, Manhattan, Queens, and Staten Island—the plot highlights how patterns of racial and economic distribution vary across different parts of the city. Notably, tracts where "White" is the largest racial group tend to cluster around higher income levels, especially in Manhattan and parts of Queens, while tracts dominated by "Hispanic" or "Black" populations often appear at lower income ranges. This visualization provides a clear, borough-specific lens into the intersection of race and income in urban spatial data.
