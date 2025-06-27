@@ -1,5 +1,12 @@
 [
   {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Race and Income",
+    "section": "",
+    "text": "This interactive plot visualizes the relationship between race and median household income across census tracts in New York City, faceted by borough. Each point represents a census tract, positioned by its dominant racial group and median income, with color intensity indicating income levels. By separating tracts by borough—Bronx, Brooklyn, Manhattan, Queens, and Staten Island—the plot highlights how patterns of racial and economic distribution vary across different parts of the city. Notably, tracts where “White” is the largest racial group tend to cluster around higher income levels, especially in Manhattan and parts of Queens, while tracts dominated by “Hispanic” or “Black” populations often appear at lower income ranges. This visualization provides a clear, borough-specific lens into the intersection of race and income in urban spatial data."
+  },
+  {
     "objectID": "about.html",
     "href": "about.html",
     "title": "About",
